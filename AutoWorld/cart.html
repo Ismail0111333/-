@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoWorld - Корзина</title>
+    
+    <!-- Подключение Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome для иконок -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Пользовательские стили -->
+    <link rel="stylesheet" href="custom.css">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+</head>
+<body>
+
+    <!-- ==================== ШАПКА САЙТА ==================== -->
+    <header class="bg-dark text-white py-3">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <!-- Логотип -->
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-car fs-1 me-2 text-warning"></i>
+                    <span class="fs-3 fw-bold">AutoWorld</span>
+                </div>
+                <!-- Навигация + Корзина -->
+                <div class="d-flex align-items-center">
+                    <nav>
+                        <ul class="nav">
+                            <li class="nav-item"><a href="index.html" class="nav-link text-white">Главная</a></li>
+                            <li class="nav-item"><a href="list.html" class="nav-link text-white">Автомобили</a></li>
+                            <li class="nav-item"><a href="form.html" class="nav-link text-white">Тест-драйв</a></li>
+                            <li class="nav-item"><a href="item.html" class="nav-link text-white">О модели</a></li>
+                        </ul>
+                    </nav>
+                    <!-- Иконка корзины с счётчиком -->
+                    <a href="cart.html" class="ms-3 text-white position-relative">
+                        <i class="fas fa-shopping-cart fs-4"></i>
+                        <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.7rem;">
+                            0
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================== ОСНОВНОЙ КОНТЕНТ ==================== -->
+    <main class="container my-5">
+        <h2 class="text-center mb-4">🛒 Моя корзина</h2>
+        
+        <!-- Таблица корзины -->
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Автомобиль</th>
+                        <th>Цена</th>
+                        <th>Количество</th>
+                        <th>Сумма</th>
+                        <th>Действие</th>
+                    </tr>
+                </thead>
+                <tbody id="cartItems">
+                    <!-- Товары будут добавлены через JavaScript -->
+                </tbody>
+                <tfoot>
+                    <tr class="table-light fw-bold">
+                        <td colspan="3" class="text-end">Итого:</td>
+                        <td id="cartTotal">0 ₽</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <!-- Кнопки действий -->
+        <div class="d-flex justify-content-between mt-4">
+            <a href="list.html" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Продолжить покупки
+            </a>
+            <button id="checkoutBtn" class="btn btn-success">
+                <i class="fas fa-credit-card"></i> Оформить заказ
+            </button>
+        </div>
+
+        <!-- Сообщение при пустой корзине -->
+        <div id="emptyCartMsg" class="text-center py-5 d-none">
+            <i class="fas fa-shopping-cart fa-4x text-muted mb-3"></i>
+            <h4>Корзина пуста</h4>
+            <p>Добавьте автомобили из <a href="list.html">списка</a></p>
+        </div>
+    </main>
+
+    <!-- ==================== ПОДВАЛ ==================== -->
+    <footer class="bg-dark text-white text-center py-4">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 AutoWorld. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- ==================== СКРИПТ КОРЗИНЫ ==================== -->
+    <script>
+        // Загрузка корзины из localStorage
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // База данных автомобилей с ценами
+        const carsData = {
+            1: { name: "Tesla Model S", price: 8999000 },
+            2: { name: "BMW i4", price: 5499000 },
+            3: { name: "Audi e-tron", price: 6999000 },
+            4: { name: "Porsche Taycan", price: 10999000 },
+            5: { name: "Ford Mustang Mach-E", price: 4999000 },
+            6: { name: "Hyundai Ioniq 6", price: 3999000 }
+        };
+
+        // Функция отображения корзины
+        function renderCart() {
+            const tbody = document.getElementById('cartItems');
+            const totalSpan = document.getElementById('cartTotal');
+            const emptyMsg = document.getElementById('emptyCartMsg');
+            let total = 0;
+
+            if (cart.length === 0) {
+                tbody.innerHTML = '';
+                emptyMsg.classList.remove('d-none');
+                totalSpan.textContent = '0 ₽';
+                return;
+            }
+
+            emptyMsg.classList.add('d-none');
+            
+            let html = '';
+            for (let i = 0; i < cart.length; i++) {
+                const item = cart[i];
+                const car = carsData[item.id];
+                const sum = car.price * item.quantity;
+                total += sum;
+                html += `
+                    <tr>
+                        <td>${car.name}</td>
+                        <td>${car.price.toLocaleString()} ₽</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="changeQuantity(${i}, -1)">-</button>
+                            <span class="mx-2">${item.quantity}</span>
+                            <button class="btn btn-sm btn-outline-secondary" onclick="changeQuantity(${i}, 1)">+</button>
+                        </td>
+                        <td>${sum.toLocaleString()} ₽</td>
+                        <td>
+                            <button class="btn btn-sm btn-danger" onclick="removeFromCart(${i})">
+                                <i class="fas fa-trash"></i> Удалить
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }
+            tbody.innerHTML = html;
+            totalSpan.textContent = total.toLocaleString() + ' ₽';
+            
+            // Обновляем счётчик в шапке
+            updateCartCount();
+        }
+
+        // Изменение количества
+        function changeQuantity(index, delta) {
+            const newQuantity = cart[index].quantity + delta;
+            if (newQuantity <= 0) {
+                removeFromCart(index);
+            } else {
+                cart[index].quantity = newQuantity;
+                saveCart();
+                renderCart();
+            }
+        }
+
+        // Удаление из корзины
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            saveCart();
+            renderCart();
+        }
+
+        // Сохранение корзины
+        function saveCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        // Обновление счётчика
+        function updateCartCount() {
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartCountSpan = document.getElementById('cartCount');
+            if (cartCountSpan) {
+                cartCountSpan.textContent = count;
+            }
+        }
+
+        // Оформление заказа
+        document.getElementById('checkoutBtn')?.addEventListener('click', function() {
+            if (cart.length === 0) {
+                alert('Корзина пуста! Добавьте автомобили.');
+                return;
+            }
+            alert('Спасибо за заказ! Наш менеджер свяжется с вами для оформления.');
+            // Очищаем корзину
+            cart = [];
+            saveCart();
+            renderCart();
+        });
+
+        // Загружаем корзину при открытии страницы
+        renderCart();
+    </script>
+</body>
+</html>

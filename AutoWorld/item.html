@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoWorld - Информация об автомобиле</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="custom.css">
+    <link rel="icon" href="img/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <header class="bg-dark text-white py-3">
+        <div class="container">
+            <div class="d-flex flex-wrap align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-car fs-1 me-2 text-warning"></i>
+                    <span class="fs-3 fw-bold">AutoWorld</span>
+                </div>
+                <div class="d-flex align-items-center">
+    <nav>
+        <ul class="nav">
+            <li class="nav-item"><a href="index.html" class="nav-link text-white">Главная</a></li>
+            <li class="nav-item"><a href="list.html" class="nav-link text-white">Автомобили</a></li>
+            <li class="nav-item"><a href="form.html" class="nav-link text-white">Тест-драйв</a></li>
+            <li class="nav-item"><a href="item.html" class="nav-link text-white">О модели</a></li>
+        </ul>
+    </nav>
+    <!-- Иконка корзины с счётчиком -->
+    <a href="cart.html" class="ms-3 text-white position-relative">
+        <i class="fas fa-shopping-cart fs-4"></i>
+        <span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.7rem;">
+            0
+        </span>
+    </a>
+</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container my-5">
+        <div class="row" id="car-details">
+            <!-- Контент подставляется скриптом -->
+        </div>
+    </main>
+
+    <footer class="bg-dark text-white text-center py-4">
+        <div class="container">
+            <p class="mb-0">&copy; 2026 AutoWorld. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // База данных автомобилей с локальными изображениями
+        const cars = {
+            1: {
+                name: "Tesla Model S",
+                subtitle: "Электрический седан бизнес-класса",
+                description: "Tesla Model S — один из самых узнаваемых электромобилей в мире. Он сочетает в себе высокую производительность, передовые технологии автономного вождения и превосходный комфорт.",
+                image: "img/tesla_model_s.jpg",
+                specs: [
+                    "Запас хода: до 600 км",
+                    "Разгон 0-100 км/ч: 2.1 сек (Plaid)",
+                    "Мощность: 1020 л.с.",
+                    "Привод: полный",
+                    "Ёмкость батареи: 100 кВт·ч"
+                ]
+            },
+            2: {
+                name: "BMW i4",
+                subtitle: "Электрический седан с динамикой спорткара",
+                description: "BMW i4 — это воплощение динамики и эффективности. Сохраняя культовый дизайн BMW, электромобиль предлагает запас хода до 590 км и потрясающую управляемость.",
+                image: "img/bmw_i4.jpg",
+                specs: [
+                    "Запас хода: до 590 км",
+                    "Разгон 0-100 км/ч: 3.9 сек",
+                    "Мощность: 544 л.с.",
+                    "Привод: полный / задний",
+                    "Ёмкость батареи: 83.9 кВт·ч"
+                ]
+            },
+            3: {
+                name: "Audi e-tron",
+                subtitle: "Премиальный электрический внедорожник",
+                description: "Audi e-tron — это комфорт, качество и передовые технологии. Просторный салон, высокая шумоизоляция и отличная проходимость делают его идеальным для семьи.",
+                image: "img/audi_etron.jpg",
+                specs: [
+                    "Запас хода: до 436 км",
+                    "Разгон 0-100 км/ч: 5.7 сек",
+                    "Мощность: 408 л.с.",
+                    "Привод: полный",
+                    "Ёмкость батареи: 95 кВт·ч"
+                ]
+            },
+            4: {
+                name: "Porsche Taycan",
+                subtitle: "Спортивный электромобиль от Porsche",
+                description: "Porsche Taycan доказывает, что электромобили могут быть настоящими спорткарами. Феноменальная динамика, отличное шасси и качество Porsche.",
+                image: "img/porsche_taycan.jpg",
+                specs: [
+                    "Запас хода: до 504 км",
+                    "Разгон 0-100 км/ч: 2.8 сек (Turbo S)",
+                    "Мощность: до 761 л.с.",
+                    "Привод: полный",
+                    "Ёмкость батареи: 93.4 кВт·ч"
+                ]
+            },
+            5: {
+                name: "Ford Mustang Mach-E",
+                subtitle: "Электрический кроссовер с узнаваемым дизайном",
+                description: "Ford Mustang Mach-E — это сочетание легендарного имени и современных электрических технологий. Просторный, динамичный и стильный.",
+                image: "img/ford_mustang_mach_e.jpg",
+                specs: [
+                    "Запас хода: до 483 км",
+                    "Разгон 0-100 км/ч: 3.5 сек (GT)",
+                    "Мощность: 480 л.с.",
+                    "Привод: полный / задний",
+                    "Ёмкость батареи: 98.8 кВт·ч"
+                ]
+            },
+            6: {
+                name: "Hyundai Ioniq 6",
+                subtitle: "Футуристичный электромобиль с отличной аэродинамикой",
+                description: "Hyundai Ioniq 6 — это аэродинамичный седан с инновационным дизайном и эффективными технологиями. Один из самых экономичных электромобилей.",
+                image: "img/hyundai_ioniq_6.jpg",
+                specs: [
+                    "Запас хода: до 614 км",
+                    "Разгон 0-100 км/ч: 5.1 сек",
+                    "Мощность: 325 л.с.",
+                    "Привод: полный / задний",
+                    "Ёмкость батареи: 77.4 кВт·ч"
+                ]
+            }
+        };
+
+        // Получаем параметр id из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const carId = urlParams.get('id');
+        const container = document.getElementById('car-details');
+
+        if (carId && cars[carId]) {
+            const car = cars[carId];
+            document.title = `AutoWorld - ${car.name}`;
+            container.innerHTML = `
+                <div class="col-md-6">
+                    <img src="${car.image}" class="img-fluid rounded" alt="${car.name}">
+                </div>
+                <div class="col-md-6">
+                    <h2>${car.name}</h2>
+                    <p class="text-muted">${car.subtitle}</p>
+                    <p>${car.description}</p>
+                    <h4>Характеристики:</h4>
+                    <ul class="list-group list-group-flush">
+                        ${car.specs.map(spec => `<li class="list-group-item">${spec}</li>`).join('')}
+                    </ul>
+                    <a href="form.html" class="btn btn-primary mt-3">Записаться на тест-драйв</a>
+                    <a href="list.html" class="btn btn-outline-secondary mt-3">Назад к списку</a>
+                </div>
+            `;
+        } else {
+            container.innerHTML = `
+                <div class="col-12 text-center">
+                    <h2>Автомобиль не найден</h2>
+                    <p>Пожалуйста, вернитесь к <a href="list.html">списку автомобилей</a> и выберите модель.</p>
+                </div>
+            `;
+        }
+    </script>
+    <script>
+    // Функция добавления в корзину
+    function addToCart(id, name, price) {
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+        
+        // Проверяем, есть ли уже такой товар
+        const existingItem = cart.find(item => item.id === id);
+        
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push({ id: id, name: name, price: price, quantity: 1 });
+        }
+        
+        localStorage.setItem('cart', JSON.stringify(cart));
+        
+        // Обновляем счётчик
+        updateCartCount();
+        
+        // Показываем уведомление
+        alert(`✅ ${name} добавлен в корзину!`);
+    }
+    
+    // Обновление счётчика корзины
+    function updateCartCount() {
+        const cart = JSON.parse(localStorage.getItem('cart')) || [];
+        const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+        const cartCountSpan = document.getElementById('cartCount');
+        if (cartCountSpan) {
+            cartCountSpan.textContent = count;
+        }
+    }
+    
+    // Обновляем счётчик при загрузке страницы
+    document.addEventListener('DOMContentLoaded', updateCartCount);
+</script>
+</body>
+</html>
